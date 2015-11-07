@@ -72,7 +72,8 @@ public class LegislatorsActivity extends ActionBarActivity {
                 .build();
 
         BillsService service = retrofit.create(BillsService.class);
-        Call<List<Bill>> call = service.getBills("rights", "CT", APIKEY);
+        String query = getIntent().getStringExtra("query");
+        Call<List<Bill>> call = service.getBills(query, "CT", APIKEY);
         call.enqueue(new Callback<List<Bill>>() {
             @Override
             public void onResponse(Response<List<Bill>> response, Retrofit retrofit) {
