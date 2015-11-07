@@ -23,11 +23,21 @@ public class LegislatorsActivity extends ActionBarActivity {
     private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
     private static final String TAG = "LegislatorsActivity";
 
+    public static class Vote {
+        public String leg_id;
+        public String name;
+    }
+
+    public static class BillVote {
+        public List<Vote> yes_votes;
+        public List<Vote> no_votes;
+    }
     public static class Bill {
         public String id;
         public String bill_number;
         public String title;
         public String description;
+        public List<BillVote> bill_votes;
 
         public Bill(String id, String bill_number, String title, String description) {
             this.id = id;
@@ -62,6 +72,12 @@ public class LegislatorsActivity extends ActionBarActivity {
                 if (response.isSuccess()) {
                     Log.d(TAG, "Response successful!");
                     Log.d(TAG, "Response: " + response.body().toString());
+                    for (Bill bill: response.body()) {
+                        BillVote bv = bill.bill_votes.get(0);
+                        for (Vote yes: bv.yes_votes) {
+                            Log.d(TAG, yes.name);
+                        }
+                    }
                 } else {
                     Log.d(TAG, "Response failure");
                 }
