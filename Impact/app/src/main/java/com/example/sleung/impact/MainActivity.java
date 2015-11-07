@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -22,7 +23,9 @@ public class MainActivity extends ActionBarActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String query = ((EditText) findViewById(R.id.searchText)).getText().toString();
                 Intent intent = new Intent(activity, LegislatorsActivity.class);
+                intent.putExtra("query", query);
                 startActivity(intent);
             }
         });

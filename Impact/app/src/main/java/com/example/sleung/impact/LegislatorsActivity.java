@@ -65,7 +65,8 @@ public class LegislatorsActivity extends ActionBarActivity {
                 .build();
 
         BillsService service = retrofit.create(BillsService.class);
-        Call<List<Bill>> call = service.getBills("rights", "*", APIKEY);
+        String query = getIntent().getStringExtra("query");
+        Call<List<Bill>> call = service.getBills(query, "*", APIKEY);
         call.enqueue(new Callback<List<Bill>>() {
             @Override
             public void onResponse(Response<List<Bill>> response, Retrofit retrofit) {
@@ -73,10 +74,6 @@ public class LegislatorsActivity extends ActionBarActivity {
                     Log.d(TAG, "Response successful!");
                     Log.d(TAG, "Response: " + response.body().toString());
                     for (Bill bill: response.body()) {
-                        BillVote bv = bill.bill_votes.get(0);
-                        for (Vote yes: bv.yes_votes) {
-                            Log.d(TAG, yes.name);
-                        }
                     }
                 } else {
                     Log.d(TAG, "Response failure");
