@@ -1,6 +1,8 @@
 package com.example.sleung.impact;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,22 +30,24 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 
-public class LegislatorsActivity extends ActionBarActivity {
+public class BillActivity extends ActionBarActivity {
 
     private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
     private static final String TAG = "LegislatorsActivity";
     private ListView mListView;
+    private ArrayList<Bill> bills;
+    private Activity activity= this;
 
     public static class Vote {
         public String leg_id;
         public String name;
     }
 
-    public static class BillVote {
+    public static class BillVote implements Serializable{
         public List<Vote> yes_votes;
         public List<Vote> no_votes;
     }
-    public static class Bill {
+    public static class Bill implements Serializable {
         public String id;
         public String bill_number;
         public String title;
@@ -63,7 +68,7 @@ public class LegislatorsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.legislators_activity);
+        setContentView(R.layout.bill_activity);
 
         mListView = (ListView) findViewById(R.id.lvLegislators);
         Retrofit retrofit = new Retrofit.Builder()
@@ -80,7 +85,7 @@ public class LegislatorsActivity extends ActionBarActivity {
                 if (response.isSuccess()) {
                     Log.d(TAG, "Response successful!");
                     Log.d(TAG, "Response: " + response.body().toString());
-                    ArrayList<Bill> bills = (ArrayList<Bill>) response.body();
+                    bills = (ArrayList<Bill>) response.body();
                     for (Bill bill: bills) {
                         ArrayList<BillVote> bvs = (ArrayList<BillVote>) bill.bill_votes;
                         if (!bvs.isEmpty()) {
@@ -96,14 +101,17 @@ public class LegislatorsActivity extends ActionBarActivity {
                         Log.d(TAG, "Yes: "+bill.yesLegislators.toString());
                         Log.d(TAG, "No: "+bill.noLegislators.toString());
                     }
-                    BillAdapter adapter = new BillAdapter(getApplicationContext(),R.layout.legislators_list,bills);
+                    BillAdapter adapter = new BillAdapter(getApplicationContext(),R.layout.bill_list,bills);
                     mListView.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
 
                     mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                            Bill bill = bills.get(i);
+                            Intent intent = new Intent(activity, LegislatorActivity.class);
+                            intent.putExtra("bill", bill);
+                            startActivity(intent);
                         }
                     });
                 } else {
@@ -157,11 +165,11 @@ public class LegislatorsActivity extends ActionBarActivity {
             Bill bill = bills.get(position);
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.legislators_list, parent, false);
+            View rowView = inflater.inflate(R.layout.bill_list, parent, false);
 
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView chamber = (TextView) rowView.findViewById(R.id.subtitle);
-            title.setText(bill.title);
+            title.setText(bill.title.substring(7));
             chamber.setText(bill.chamber);
             return rowView;
         }

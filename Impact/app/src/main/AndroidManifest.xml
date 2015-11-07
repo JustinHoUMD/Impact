@@ -17,7 +17,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LegislatorsActivity"
+            android:name=".BillActivity"
+            android:label="BillActivity" >
+        </activity>
+        <activity
+            android:name=".LegislatorActivity"
             android:label="LegislatorActivity" >
         </activity>
 

@@ -24,7 +24,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
                 String query = ((EditText) findViewById(R.id.searchText)).getText().toString();
-                Intent intent = new Intent(activity, LegislatorsActivity.class);
+                Intent intent = new Intent(activity, BillActivity.class);
                 intent.putExtra("query", query);
                 startActivity(intent);
             }
