@@ -1,17 +1,19 @@
 package com.example.sleung.impact;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListAdapter;
 
 
-public class MainActivity extends ActionBarActivity {
+public class LegislatorsActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.search_page);
+        setContentView(R.layout.legislators_list);
     }
 
     @Override
@@ -35,4 +37,9 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+//    private class LegislatorAdapter extends ArrayAdapter<> {
+//        public LegislatorAdapter(Context context, ArrayList<T> legislators) {
+//        }
+//    }
 }
