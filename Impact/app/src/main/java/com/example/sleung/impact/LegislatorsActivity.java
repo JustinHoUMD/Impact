@@ -15,7 +15,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import retrofit.Call;
@@ -47,6 +52,10 @@ public class LegislatorsActivity extends ActionBarActivity {
         public String bill_number;
         public String title;
         public String chamber;
+        public String current_status_date;
+        public String current_status;
+        public String lastActionString = "Proposed";
+        public String created_at;
         public String description;
         public List<BillVote> bill_votes;
         public List<String> yesLegislators = new ArrayList<String>();
@@ -80,8 +89,8 @@ public class LegislatorsActivity extends ActionBarActivity {
                 if (response.isSuccess()) {
                     Log.d(TAG, "Response successful!");
                     Log.d(TAG, "Response: " + response.body().toString());
-                    ArrayList<Bill> bills = (ArrayList<Bill>) response.body();
-                    for (Bill bill: bills) {
+                    ArrayList<Bill> bills = new ArrayList<Bill>();
+                    for (Bill bill: response.body()) {
                         ArrayList<BillVote> bvs = (ArrayList<BillVote>) bill.bill_votes;
                         if (!bvs.isEmpty()) {
                             for (BillVote bv:bvs) {
@@ -91,7 +100,26 @@ public class LegislatorsActivity extends ActionBarActivity {
                                 for (Vote no: bv.no_votes) {
                                     bill.noLegislators.add(no.leg_id);
                                 }
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                                Date lastUpdatedDate = null;
+                                SimpleDateFormat outFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+                                try {
+                                    lastUpdatedDate = sdf.parse(bill.current_status_date);
+                                    String cap = bill.current_status.substring(0, 1).toUpperCase() + bill.current_status.substring(1);
+                                    bill.lastActionString = cap + " (" + outFormat.format(lastUpdatedDate)+ ")";
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    try {
+                                        bill.lastActionString = "Proposed" + " (" + outFormat.format(sdf.parse(bill.created_at))+ ")" ;
+                                    } catch (ParseException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+
                             }
+                            bills.add(bill);
                         }
                         Log.d(TAG, "Yes: "+bill.yesLegislators.toString());
                         Log.d(TAG, "No: "+bill.noLegislators.toString());
@@ -162,7 +190,7 @@ public class LegislatorsActivity extends ActionBarActivity {
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView chamber = (TextView) rowView.findViewById(R.id.subtitle);
             title.setText(bill.title);
-            chamber.setText(bill.chamber);
+            chamber.setText(bill.lastActionString);
             return rowView;
         }
     }
