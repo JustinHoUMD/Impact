@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Call;
@@ -20,7 +21,7 @@ import retrofit.http.Query;
 
 public class LegislatorsActivity extends ActionBarActivity {
 
-    private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
+        private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
     private static final String TAG = "LegislatorsActivity";
 
     public static class Vote {
@@ -74,6 +75,14 @@ public class LegislatorsActivity extends ActionBarActivity {
                     Log.d(TAG, "Response successful!");
                     Log.d(TAG, "Response: " + response.body().toString());
                     for (Bill bill: response.body()) {
+                        ArrayList<BillVote> bvs = (ArrayList<BillVote>) bill.bill_votes;
+                        if (!bvs.isEmpty()) {
+                            for (BillVote bv:bvs) {
+                                for (Vote yes: bv.yes_votes) {
+                                    Log.d(TAG, yes.name);
+                                }
+                            }
+                        }
                     }
                 } else {
                     Log.d(TAG, "Response failure");
