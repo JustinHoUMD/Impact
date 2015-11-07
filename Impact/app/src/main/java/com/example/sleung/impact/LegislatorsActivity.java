@@ -1,30 +1,27 @@
 package com.example.sleung.impact;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListAdapter;
-
-import com.example.sleung.impact.models.Legislator;
 
 
 import java.util.List;
 
 import retrofit.Call;
 import retrofit.Callback;
+import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.http.GET;
-import retrofit.http.Path;
 import retrofit.http.Query;
 
 
 public class LegislatorsActivity extends ActionBarActivity {
 
-    private String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
+    private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
+    private static final String TAG = "LegislatorsActivity";
 
     public static class Bill {
         public String id;
@@ -41,8 +38,8 @@ public class LegislatorsActivity extends ActionBarActivity {
     }
 
     public interface BillsService {
-        @GET("/bills?q={category}&legislature={state}&apikey={api_key}")
-        Call<Bill> getBills(@Query("q") String query, @Query("legislature") String state, @Query("apikey") String apikey);
+        @GET("/bills")
+        Call<List<Bill>> getBills(@Query("q") String query, @Query("legislature") String state, @Query("apikey") String apikey);
     }
 
 
@@ -54,17 +51,19 @@ public class LegislatorsActivity extends ActionBarActivity {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.fiscalnote.com")
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         BillsService service = retrofit.create(BillsService.class);
-        Call<Bill> call = service.getBills("gay marriange", "ct", APIKEY);
+        Call<List<Bill>> call = service.getBills("rights", "*", APIKEY);
         call.enqueue(new Callback<List<Bill>>() {
             @Override
             public void onResponse(Response<List<Bill>> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
-                    // tasks available
+                    Log.d(TAG, "Response successful!");
+                    Log.d(TAG, "Response: " + response.body().toString());
                 } else {
-                    // error response, no access to resource?
+                    Log.d(TAG, "Response failure");
                 }
             }
 
