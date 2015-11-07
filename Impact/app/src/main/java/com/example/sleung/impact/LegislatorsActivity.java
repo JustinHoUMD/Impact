@@ -1,6 +1,9 @@
 package com.example.sleung.impact;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -13,7 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -82,6 +89,7 @@ public class LegislatorsActivity extends ActionBarActivity {
 
         BillsService service = retrofit.create(BillsService.class);
         String query = getIntent().getStringExtra("query");
+        if (query.trim() == "") query = "Rights";
         Call<List<Bill>> call = service.getBills(query, "CT", APIKEY);
         call.enqueue(new Callback<List<Bill>>() {
             @Override
@@ -117,7 +125,6 @@ public class LegislatorsActivity extends ActionBarActivity {
                                         ex.printStackTrace();
                                     }
                                 }
-
                             }
                             bills.add(bill);
                         }
@@ -125,7 +132,7 @@ public class LegislatorsActivity extends ActionBarActivity {
                         Log.d(TAG, "No: "+bill.noLegislators.toString());
                     }
                     BillAdapter adapter = new BillAdapter(getApplicationContext(),R.layout.legislators_list,bills);
-                    mListView.setAdapter(adapter);
+
                     adapter.notifyDataSetChanged();
 
                     mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
