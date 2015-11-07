@@ -19,7 +19,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:singleLine="true"
-        android:textStyle="italic"
         android:textColor="@color/DimGray"
         android:id="@+id/subtitle"
         android:text="chamber"

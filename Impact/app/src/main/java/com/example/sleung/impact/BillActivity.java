@@ -18,7 +18,12 @@ import android.widget.TextView;
 
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import retrofit.Call;
@@ -35,10 +40,10 @@ public class BillActivity extends ActionBarActivity {
     private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
     private static final String TAG = "LegislatorsActivity";
     private ListView mListView;
-    private ArrayList<Bill> bills;
+    private ArrayList<Bill> bills = new ArrayList<Bill>();
     private Activity activity= this;
 
-    public static class Vote {
+    public static class Vote implements Serializable {
         public String leg_id;
         public String name;
     }
@@ -52,6 +57,10 @@ public class BillActivity extends ActionBarActivity {
         public String bill_number;
         public String title;
         public String chamber;
+        public String current_status_date;
+        public String current_status;
+        public String lastActionString = "Proposed";
+        public String created_at;
         public String description;
         public List<BillVote> bill_votes;
         public List<String> yesLegislators = new ArrayList<String>();
@@ -85,8 +94,7 @@ public class BillActivity extends ActionBarActivity {
                 if (response.isSuccess()) {
                     Log.d(TAG, "Response successful!");
                     Log.d(TAG, "Response: " + response.body().toString());
-                    bills = (ArrayList<Bill>) response.body();
-                    for (Bill bill: bills) {
+                    for (Bill bill: response.body()) {
                         ArrayList<BillVote> bvs = (ArrayList<BillVote>) bill.bill_votes;
                         if (!bvs.isEmpty()) {
                             for (BillVote bv:bvs) {
@@ -96,7 +104,26 @@ public class BillActivity extends ActionBarActivity {
                                 for (Vote no: bv.no_votes) {
                                     bill.noLegislators.add(no.leg_id);
                                 }
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                                Date lastUpdatedDate = null;
+                                SimpleDateFormat outFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+                                try {
+                                    lastUpdatedDate = sdf.parse(bill.current_status_date);
+                                    String cap = bill.current_status.substring(0, 1).toUpperCase() + bill.current_status.substring(1);
+                                    bill.lastActionString = cap + " (" + outFormat.format(lastUpdatedDate)+ ")";
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    try {
+                                        bill.lastActionString = "Proposed" + " (" + outFormat.format(sdf.parse(bill.created_at))+ ")" ;
+                                    } catch (ParseException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                }
+
                             }
+                            bills.add(bill);
                         }
                         Log.d(TAG, "Yes: "+bill.yesLegislators.toString());
                         Log.d(TAG, "No: "+bill.noLegislators.toString());
@@ -169,8 +196,9 @@ public class BillActivity extends ActionBarActivity {
 
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView chamber = (TextView) rowView.findViewById(R.id.subtitle);
-            title.setText(bill.title.substring(7));
-            chamber.setText(bill.chamber);
+
+            title.setText(bill.title);
+            chamber.setText(bill.lastActionString);
             return rowView;
         }
     }
