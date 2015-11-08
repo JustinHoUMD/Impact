@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="wrap_content"
-        android:layout_height="match_parent" android:id="@+id/text_fields">
+        android:layout_height="match_parent" android:id="@+id/text_fields" android:layout_toRightOf="@+id/vote">
 
         <TextView
             android:id="@+id/legislator_name"
@@ -14,6 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
             android:textSize="20sp"
             android:text="Legislator"/>
 
@@ -21,18 +22,42 @@
             android:id="@+id/party_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+
             android:layout_marginLeft="10dp"
             android:text="Party" />
 
 
     </LinearLayout>
     <ImageView
+        android:id="@+id/call"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/call"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/email"
+        android:layout_marginRight="15dp"
+        android:backgroundTint="@color/Green"
+        />
+    <ImageView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/email"
+        android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:backgroundTint="@color/CadetBlue"
+
+        />
+    <ImageView
+        android:id="@+id/vote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:background="@drawable/check"
         android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
+        android:layout_marginLeft="15dp"
         android:backgroundTint="@color/Green"
         />
 </RelativeLayout>

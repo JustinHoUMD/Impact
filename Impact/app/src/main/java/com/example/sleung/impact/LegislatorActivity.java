@@ -3,6 +3,7 @@ package com.example.sleung.impact;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -13,13 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.sleung.impact.models.Legislator;
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.util.ArrayList;
 
@@ -76,13 +76,18 @@ public class LegislatorActivity extends ActionBarActivity{
                 .build();
 
         BillsService service = retrofit.create(BillsService.class);
-        for(String leg:legislators) {
+        for(int i=0; i<legislators.size(); i++) {
+            final int index = i;
+            String leg = legislators.get(index);
             Call<Legislator> call = service.getLegislator(leg, API_KEY);
             call.enqueue(new Callback<Legislator>() {
                 @Override
                 public void onResponse(Response<Legislator> response, Retrofit retrofit) {
                     if (response.isSuccess()) {
                         Legislator leg = response.body();
+                        if (index<separationIndex) {
+                            leg.vote = true;
+                        }
                         legislators2.add(leg);
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
@@ -104,8 +109,6 @@ public class LegislatorActivity extends ActionBarActivity{
 
             });
         }
-
-
         Log.d(TAG, "Adapter: " + mLegislatorList);
         Log.d(TAG, "Legislators: " + legislators);
     }
@@ -134,9 +137,32 @@ public class LegislatorActivity extends ActionBarActivity{
             } else {
                 party.setText("Independent");
             }
-            if (position < separationIndex) {
-
+            Log.d(TAG, "position: " + position);
+            Log.d(TAG, "separate: " + separationIndex);
+            if (position >= separationIndex) {
+                ImageView image = (ImageView) rowView.findViewById(R.id.vote);
+                image.setBackgroundResource(R.drawable.close);
+                image.setColorFilter(Color.argb(170, 170, 170, 255));
             }
+            ImageView call = (ImageView) rowView.findViewById(R.id.call);
+            call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri number = Uri.parse("tel:3013256815");
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                    startActivity(callIntent);
+                }
+            });
+
+            ImageView email = (ImageView) rowView.findViewById(R.id.email);
+            email.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri number = Uri.parse("tel:3013256815");
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                    startActivity(callIntent);
+                }
+            });
 
             return rowView;
         }
