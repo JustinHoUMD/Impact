@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="80dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/check"
+        android:layout_gravity="center_vertical"
+        android:backgroundTint="@color/Green"
+        />
 
     <LinearLayout
         android:orientation="vertical" android:layout_width="wrap_content"
-        android:layout_height="match_parent" android:id="@+id/text_fields">
+        android:layout_height="match_parent" android:id="@+id/text_fields" android:layout_gravity="center_vertical" android:layout_marginTop="5dp" android:layout_marginLeft="20dp">
 
         <TextView
             android:id="@+id/legislator_name"
@@ -26,13 +35,13 @@
 
 
     </LinearLayout>
+
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/check"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
-        android:backgroundTint="@color/Green"
-        />
-</RelativeLayout>
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

@@ -2,8 +2,6 @@ package com.example.sleung.impact;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -11,20 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.sleung.impact.models.Legislator;
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
-
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-import java.util.List;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
@@ -37,7 +27,7 @@ import retrofit.http.Query;
 /**
  * Created by me on 11/7/15.
  */
-public class LegislatorActivity extends ActionBarActivity{
+public class LegislatorActivity extends Activity{
     private static final String TAG = "LegislatorActivity";
     private static final String API_KEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
     private BillActivity.Bill bill;

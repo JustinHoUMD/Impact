@@ -25,9 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
-import com.wdullaer.swipeactionadapter.SwipeDirections;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -46,7 +43,7 @@ import retrofit.http.GET;
 import retrofit.http.Query;
 
 
-public class BillActivity extends ActionBarActivity {
+public class BillActivity extends Activity {
 
     private static final String APIKEY = "UA8MW8CXNKX49HXPZMYCJ0KWXYXOUGW2";
     private static final String TAG = "LegislatorsActivity";
