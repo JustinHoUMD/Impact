@@ -46,7 +46,6 @@ public class LegislatorActivity extends ActionBarActivity{
     private int separationIndex;
     private ArrayList<String> legislators;
     private ArrayList<Legislator> legislators2;
-    private SwipeActionAdapter mAdapter;
     private LegislatorAdapter adapter;
     private Activity activity = this;
 
@@ -85,53 +84,11 @@ public class LegislatorActivity extends ActionBarActivity{
                     if (response.isSuccess()) {
                         Legislator leg = response.body();
                         legislators2.add(leg);
-                        if (mAdapter != null) {
-                            mAdapter.notifyDataSetChanged();
+                        if (adapter != null) {
+                            adapter.notifyDataSetChanged();
                         } else {
-                            LegislatorAdapter adapter = new LegislatorAdapter(activity, R.id.legislator_list, legislators2);
-                            mAdapter = new SwipeActionAdapter(adapter);
-                            mAdapter.setListView(mLegislatorList);
-                            mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_LEFT, R.layout.bg_swipe_left);
-                            mAdapter.addBackground(SwipeDirections.DIRECTION_NORMAL_RIGHT, R.layout.bg_swipe_right);
-                            // Listen to swipes
-                            mAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
-                                @Override
-                                public boolean hasActions(int position) {
-                                    // All items can be swiped
-                                    return true;
-                                }
-
-                                @Override
-                                public boolean shouldDismiss(int position, int direction) {
-                                    // Only dismiss an item when swiping normal left
-                                    return false;
-                                }
-
-                                @Override
-                                public void onSwipe(int[] positionList, int[] directionList) {
-                                    for (int i = 0; i < positionList.length; i++) {
-                                        int direction = directionList[i];
-                                        Legislator l = (Legislator) mAdapter.getAdapter().getItem(positionList[0]);
-                                        Log.d(TAG, l.office_phone);
-                                        switch (direction) {
-                                            case SwipeDirections.DIRECTION_NORMAL_LEFT:
-                                                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                                                emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"shermankleung@gmail.com"});
-                                                getBaseContext().startActivity(Intent.createChooser(emailIntent, "Send email"));
-                                                break;
-                                            case SwipeDirections.DIRECTION_NORMAL_RIGHT:
-                                                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                                callIntent.setData(Uri.parse("tel:3013256815"));
-                                                getBaseContext().startActivity(callIntent);
-                                                break;
-                                        }
-
-                                        mAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                            });
-                            mLegislatorList.setAdapter(mAdapter);
+                            adapter = new LegislatorAdapter(activity, R.id.legislator_list, legislators2);
+                            mLegislatorList.setAdapter(adapter);
                         }
                     } else {
                         Log.d(TAG, "Response Failed");
