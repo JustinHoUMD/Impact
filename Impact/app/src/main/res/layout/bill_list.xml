@@ -9,7 +9,7 @@
         android:layout_marginLeft="10dp"
         android:singleLine="true"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:textColor="@color/FiscalPurple"
         android:text="Bill Name"
         android:id="@+id/title"

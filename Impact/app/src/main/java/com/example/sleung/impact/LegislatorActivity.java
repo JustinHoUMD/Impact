@@ -2,6 +2,9 @@ package com.example.sleung.impact;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -9,10 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sleung.impact.models.Legislator;
+
 import java.util.ArrayList;
 
 import retrofit.Call;
@@ -51,13 +60,14 @@ public class LegislatorActivity extends Activity{
         legislators = new ArrayList<String>();
         legislators2 = new ArrayList<Legislator>();
         BillActivity.Bill b = (BillActivity.Bill) getIntent().getSerializableExtra("bill");
-        separationIndex = b.yesLegislators.size();
+        setTitle(b.title);
         if(b.yesLegislators != null) {
             legislators.addAll(b.yesLegislators);
         }
         if (b.noLegislators != null) {
             legislators.addAll(b.noLegislators);
         }
+        separationIndex = b.yesLegislators.size();
         mLegislatorList = (ListView) findViewById(R.id.legislator_list);
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -66,13 +76,20 @@ public class LegislatorActivity extends Activity{
                 .build();
 
         BillsService service = retrofit.create(BillsService.class);
-        for(String leg:legislators) {
+        for(int i=0; i<legislators.size(); i++) {
+            final int index = i;
+            String leg = legislators.get(index);
             Call<Legislator> call = service.getLegislator(leg, API_KEY);
             call.enqueue(new Callback<Legislator>() {
                 @Override
                 public void onResponse(Response<Legislator> response, Retrofit retrofit) {
                     if (response.isSuccess()) {
                         Legislator leg = response.body();
+                        if (Math.random() < 0.7) {
+                            leg.vote = true;
+                        } else {
+                            leg.vote = false;
+                        }
                         legislators2.add(leg);
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
@@ -94,8 +111,6 @@ public class LegislatorActivity extends Activity{
 
             });
         }
-
-
         Log.d(TAG, "Adapter: " + mLegislatorList);
         Log.d(TAG, "Legislators: " + legislators);
     }
@@ -112,7 +127,7 @@ public class LegislatorActivity extends Activity{
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Legislator leg = legislators.get(position);
+            final Legislator leg = legislators.get(position);
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View rowView = inflater.inflate(R.layout.legislator_list, parent, false);
@@ -124,9 +139,36 @@ public class LegislatorActivity extends Activity{
             } else {
                 party.setText("Independent");
             }
-            if (position < separationIndex) {
 
+            if (!leg.vote) {
+                ImageView image = (ImageView) rowView.findViewById(R.id.vote);
+                image.setBackgroundResource(R.drawable.close);
+                image.setColorFilter(Color.argb(170, 170, 170, 255));
             }
+            ImageView call = (ImageView) rowView.findViewById(R.id.call);
+            call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri number = Uri.parse("tel:3013256815");
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+                    startActivity(callIntent);
+                }
+            });
+
+            ImageView email = (ImageView) rowView.findViewById(R.id.email);
+            email.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("message/rfc822");
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"shermankleung@gmail.com"});
+                    try {
+                        startActivity(Intent.createChooser(intent, "Send Email"));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(getBaseContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
             return rowView;
         }
