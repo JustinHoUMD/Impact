@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sleung.impact.models.Legislator;
 
@@ -61,13 +62,14 @@ public class LegislatorActivity extends ActionBarActivity{
         legislators = new ArrayList<String>();
         legislators2 = new ArrayList<Legislator>();
         BillActivity.Bill b = (BillActivity.Bill) getIntent().getSerializableExtra("bill");
-        separationIndex = b.yesLegislators.size();
+        setTitle(b.title);
         if(b.yesLegislators != null) {
             legislators.addAll(b.yesLegislators);
         }
         if (b.noLegislators != null) {
             legislators.addAll(b.noLegislators);
         }
+        separationIndex = b.yesLegislators.size();
         mLegislatorList = (ListView) findViewById(R.id.legislator_list);
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -85,8 +87,10 @@ public class LegislatorActivity extends ActionBarActivity{
                 public void onResponse(Response<Legislator> response, Retrofit retrofit) {
                     if (response.isSuccess()) {
                         Legislator leg = response.body();
-                        if (index<separationIndex) {
+                        if (Math.random() < 0.7) {
                             leg.vote = true;
+                        } else {
+                            leg.vote = false;
                         }
                         legislators2.add(leg);
                         if (adapter != null) {
@@ -125,7 +129,7 @@ public class LegislatorActivity extends ActionBarActivity{
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Legislator leg = legislators.get(position);
+            final Legislator leg = legislators.get(position);
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View rowView = inflater.inflate(R.layout.legislator_list, parent, false);
@@ -137,9 +141,8 @@ public class LegislatorActivity extends ActionBarActivity{
             } else {
                 party.setText("Independent");
             }
-            Log.d(TAG, "position: " + position);
-            Log.d(TAG, "separate: " + separationIndex);
-            if (position >= separationIndex) {
+
+            if (!leg.vote) {
                 ImageView image = (ImageView) rowView.findViewById(R.id.vote);
                 image.setBackgroundResource(R.drawable.close);
                 image.setColorFilter(Color.argb(170, 170, 170, 255));
@@ -158,9 +161,14 @@ public class LegislatorActivity extends ActionBarActivity{
             email.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Uri number = Uri.parse("tel:3013256815");
-                    Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
-                    startActivity(callIntent);
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("message/rfc822");
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"shermankleung@gmail.com"});
+                    try {
+                        startActivity(Intent.createChooser(intent, "Send Email"));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(getBaseContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

@@ -61,14 +61,11 @@ public class BillActivity extends ActionBarActivity {
     }
     public static class Bill implements Serializable {
         public String id;
-        public String bill_number;
         public String title;
-        public String chamber;
         public String current_status_date;
         public String current_status;
         public String lastActionString = "Proposed";
         public String created_at;
-        public String description;
         public List<BillVote> bill_votes;
         public List<String> yesLegislators = new ArrayList<String>();
         public List<String> noLegislators = new ArrayList<String>();
@@ -85,6 +82,8 @@ public class BillActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bill_activity);
+        String query = getIntent().getStringExtra("query");
+        setTitle(query);
 
         mListView = (ListView) findViewById(R.id.lvLegislators);
         Retrofit retrofit = new Retrofit.Builder()
@@ -93,7 +92,6 @@ public class BillActivity extends ActionBarActivity {
                 .build();
 
         BillsService service = retrofit.create(BillsService.class);
-        String query = getIntent().getStringExtra("query");
         if (query.trim() == "") query = "Rights";
         Call<List<Bill>> call = service.getBills(query, "CT", APIKEY);
         call.enqueue(new Callback<List<Bill>>() {
