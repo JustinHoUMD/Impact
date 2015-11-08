@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,6 +23,8 @@ import com.wdullaer.swipeactionadapter.SwipeDirections;
 
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+import java.util.List;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
@@ -42,6 +47,7 @@ public class LegislatorActivity extends ActionBarActivity{
     private ArrayList<String> legislators;
     private ArrayList<Legislator> legislators2;
     private SwipeActionAdapter mAdapter;
+    private LegislatorAdapter adapter;
     private Activity activity = this;
 
     public interface BillsService {
@@ -98,7 +104,7 @@ public class LegislatorActivity extends ActionBarActivity{
                                 @Override
                                 public boolean shouldDismiss(int position, int direction) {
                                     // Only dismiss an item when swiping normal left
-                                    return direction == SwipeDirections.DIRECTION_NORMAL_LEFT;
+                                    return false;
                                 }
 
                                 @Override
@@ -110,7 +116,8 @@ public class LegislatorActivity extends ActionBarActivity{
                                         switch (direction) {
                                             case SwipeDirections.DIRECTION_NORMAL_LEFT:
                                                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                                                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"shermankleung@gmail.com" });
+                                                emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"shermankleung@gmail.com"});
                                                 getBaseContext().startActivity(Intent.createChooser(emailIntent, "Send email"));
                                                 break;
                                             case SwipeDirections.DIRECTION_NORMAL_RIGHT:
@@ -165,7 +172,7 @@ public class LegislatorActivity extends ActionBarActivity{
             TextView name = (TextView) rowView.findViewById(R.id.legislator_name);
             TextView party = (TextView) rowView.findViewById(R.id.party_name);
             name.setText(leg.full_name);
-            if (!leg.party.isEmpty()) {
+            if (leg.party != null) {
                 party.setText(leg.party);
             } else {
                 party.setText("Independent");
